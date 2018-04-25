@@ -20,7 +20,7 @@ html{*overflow:auto;}
 #container.sideBarHide .nav{padding-left:35px;}
 
 /*#main区域样式*/
-#main{padding:0 215px 0 182px;}
+#main{padding:0 215px 0 60px;}
 #main.sideBarHide{padding-left:10px;}
 /*侧边栏搜索条件*/
 .sideBar{position:relative;float:left;margin-left:-182px;width:182px;}
@@ -68,7 +68,8 @@ html{*overflow:auto;}
 
 /*搜索内容主体*/
 .resultArea .resultList .itemBody{margin-bottom:5px;line-height:18px;width:90%;}
-.resultArea .resultList .itemFoot{color:#008000;}
+/*.resultArea .resultList .itemFoot{color:#008000;}*/
+.resultArea .resultList .itemFoot{color: #000500;}
 .resultArea .resultList .itemFoot .info{margin-right:10px;}
 
 .resultArea .pagination{margin-bottom:25px;padding-left:32px;}

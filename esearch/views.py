@@ -20,8 +20,16 @@ class IndexView(View):
     #首页
     def get(self, request):
         # pass
-        topn_search = redis_cli.zrevrangebyscore("search_keywords_set", "+inf", "-inf", start=0, num=5)
-        return render(request, "index.html", {"topn_search":topn_search})
+        topn_search_clean = []
+        topn_search = redis_cli.zrevrangebyscore(
+            "search_keywords_set", "+inf", "-inf", start=0, num=5)
+        for topn_key in topn_search:
+            topn_key = str(topn_key, encoding="utf-8")
+            topn_search_clean.append(topn_key)
+        topn_search = topn_search_clean
+        return render(request, "index.html", {"topn_search": topn_search})
+        # topn_search = redis_cli.zrevrangebyscore("search_keywords_set", "+inf", "-inf", start=0, num=5)
+        # return render(request, "index.html", {"topn_search":topn_search})
 
 
 class SearchSuggest(View):
@@ -46,13 +54,23 @@ class SearchSuggest(View):
             json.dumps(re_datas),
             content_type="application/json")
 
-class SearchView(View):
 
+class SearchView(View):
     def get(self, request):
         key_words = request.GET.get("q", "")
 
         redis_cli.zincrby("search_keywords_set", key_words)
-        topn_search = redis_cli.zrevrangebyscore("search_keywords_set", "+inf", "-inf", start=0, num=5)
+        # 获取topn个搜索词
+        topn_search_clean = []
+        topn_search = redis_cli.zrevrangebyscore(
+            "search_keywords_set", "+inf", "-inf", start=0, num=5)
+        for topn_key in topn_search:
+            topn_key = str(topn_key, encoding="utf-8")
+            topn_search_clean.append(topn_key)
+        topn_search = topn_search_clean
+
+        # redis_cli.zincrby("search_keywords_set", key_words)
+        # topn_search = redis_cli.zrevrangebyscore("search_keywords_set", "+inf", "-inf", start=0, num=5)
 
         page = request.GET.get("p", "1")
         try:
@@ -104,9 +122,19 @@ class SearchView(View):
 
             hit_dict["upload_time"] = hit["_source"]["upload_time"]
             hit_dict["url"] = hit["_source"]["url"]
+            hit_dict["source_website"] = hit["_source"]["source_website"]
             hit_dict["score"] = hit["_score"]
 
+            upload_time = hit["_source"]["upload_time"]
+            m = re.match(r'(\d+-\d+-\d+)T.*', upload_time)
+            if m :
+                upload_time = m.group(1)
+            else:
+                upload_time = hit["_source"]["upload_time"]
+
             hit_list.append(hit_dict)
+
+            print(upload_time)
 
         return render(request, "result.html", {"page":page,
                                                "all_hits":hit_list,
@@ -114,5 +142,6 @@ class SearchView(View):
                                                "total_nums":total_nums,
                                                "page_nums":page_nums,
                                                "last_seconds":last_seconds,
-                                               "topn_search":topn_search
+                                               "topn_search":topn_search,
+                                               "upload_time":upload_time
                                                })
