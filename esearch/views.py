@@ -59,6 +59,8 @@ class SearchView(View):
     def get(self, request):
         key_words = request.GET.get("q", "")
 
+        print("key_words: " + key_words)
+
         redis_cli.zincrby("search_keywords_set", key_words)
         # 获取topn个搜索词
         topn_search_clean = []

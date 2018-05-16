@@ -93,7 +93,8 @@
                 cache: false,
                 type: 'get',
                 dataType:'json',
-                url:suggest_url+"?s="+searchText+"&s_type="+$(".searchItem.current").attr('data-type'),
+                {#url:suggest_url+"?s="+searchText+"&s_type="+$(".searchItem.current").attr('data-type'),#}
+                url:suggest_url+"?s="+searchText,
                 async: true,
                 success: function(data) {
                     for (var i=0;i<data.length;i++){
@@ -128,7 +129,9 @@
     MapSearchArr();
 
     function add_search(){
+
         var val = $(".searchInput").val();
+
         if (val.length>=2){
             //点击搜索按钮时，去重
             KillRepeat(val);
@@ -138,7 +141,8 @@
             MapSearchArr();
         }
 
-        window.location.href=search_url+'?q='+val+"&s_type="+$(".searchItem.current").attr('data-type')
+        {#window.location.href=search_url+'?q='+val+"&s_type="+$(".searchItem.current").attr('data-type')#}
+        window.location.href=search_url+'?q='+val
 
     }
 
